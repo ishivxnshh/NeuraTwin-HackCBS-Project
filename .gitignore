@@ -1,0 +1,4 @@
+// ...existing code...
+# Ignore local environment files in frontend
+/frontend/.env.local
+/frontend/.env*
