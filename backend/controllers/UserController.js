@@ -1,16 +1,28 @@
 // controllers/user.controller.js
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 exports.getCurrentUser = async (req, res) => {
   try {
-    // JUST ADDED TO SEE IF IT WORKS-------------
-    if (!req.user || !req.user.id) {
-      return res.status(401).json({
-        success: false,
-        message: 'Unauthorized. Please check your auth token or login again.',
+    const userId = req.userId; // from simple auth middleware
+    
+    // Check if userId is a valid ObjectId, otherwise create a demo user response
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      // Return a mock user for demo/simple auth
+      return res.status(200).json({ 
+        success: true, 
+        user: {
+          _id: userId,
+          email: `${userId}@demo.local`,
+          name: userId === 'demo-user' ? 'Demo User' : userId,
+          goals: [],
+          milestones: [],
+          personality: {},
+          growth: { journalStreak: 0, milestoneCount: 0 }
+        }
       });
     }
-    const userId = req.user.id;
+
     const user = await User.findById(userId);
 
     if (!user) {
@@ -28,7 +40,7 @@ exports.getCurrentUser = async (req, res) => {
 
 exports.logoutUser = async (req, res) => {
   try {
-    res.setHeader('auth-token', '');
+    // Simple logout - just clear client-side token
     return res
       .status(200)
       .json({ success: true, message: 'Logged out successfully.' });

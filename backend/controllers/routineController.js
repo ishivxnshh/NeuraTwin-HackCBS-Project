@@ -2,7 +2,7 @@ const Routine = require("../models/Routine");
 exports.createRoutine = async (req, res) => {
   try {
     const { title, description, priority } = req.body;
-    const userId = req.user.id;
+    const userId = req.userId;
 
     const routine = await Routine.create({
       userId,
@@ -19,7 +19,7 @@ exports.createRoutine = async (req, res) => {
 
 exports.getRoutines = async (req, res) => {
   try {
-    const routines = await Routine.find({ userId: req.user.id });
+    const routines = await Routine.find({ userId: req.userId });
     res.json({ routines });
   } catch (err) {
     res.status(500).json({ message: "Error fetching routines", err });
@@ -30,7 +30,7 @@ exports.toggleCompletion = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const routine = await Routine.findOne({ _id: id, userId: req.user.id });
+    const routine = await Routine.findOne({ _id: id, userId: req.userId });
     if (!routine) return res.status(404).json({ message: "Not found" });
 
     routine.completed = !routine.completed;
@@ -45,7 +45,7 @@ exports.toggleCompletion = async (req, res) => {
 // controllers/routineController.js
 exports.resetRoutinesForNewDay = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
 
     await Routine.updateMany(
       { userId, completed: true },
@@ -60,7 +60,7 @@ exports.resetRoutinesForNewDay = async (req, res) => {
 // DELETE ROUTINE FOR USER ---------------------
 exports.deleteRoutine = async (req, res) => {
   const { routineId } = req.params;
-  const userId = req.user.id;
+  const userId = req.userId;
 
   try {
     const deleted = await Routine.findOneAndDelete({ _id: routineId, userId });
@@ -81,7 +81,7 @@ exports.deleteRoutine = async (req, res) => {
 // UPDATE ROUTINE FOR USER ----------------------
 exports.updateRoutine = async (req, res) => {
   const { routineId } = req.params;
-  const userId = req.user.id;
+  const userId = req.userId;
   const { title, description, priority } = req.body;
 
   try {

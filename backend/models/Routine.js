@@ -4,8 +4,7 @@ const mongoose = require("mongoose");
 const RoutineSchema = new mongoose.Schema(
   {
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: String, // Changed from ObjectId to String for simple auth
       required: true,
     },
     title: {

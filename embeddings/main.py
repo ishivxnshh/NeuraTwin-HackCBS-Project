@@ -66,7 +66,7 @@ def embed():
         data = request.json
         text = data.get("text", "")
         journal_id = data.get("id", "")
-        user_id = data.get("userId", "")
+        user_id = data.get("userId", "demo-user")  # Default to demo-user
         summary = data.get("summary", "")
         created_at = data.get("createdAt", "")
 
@@ -101,32 +101,38 @@ def embed():
         logger.error(f"Failed to upsert embedding: {str(e)}")
         return jsonify({"error": f"Failed to upsert embedding: {str(e)}"}), 500
 
-# Filters by userId to ensure user-specific results.
+# Filters by userId to ensure user-specific results (if userId provided).
 # Returns matches with id, score, and metadata (including summary, userId, createdAt).
+# If no userId provided, searches across all users.
     
 @app.route("/query", methods=["POST"])
 def query():
     try:
         data = request.json
         prompt = data.get("prompt", "")
-        user_id = data.get("userId", "")
+        user_id = data.get("userId", "demo-user")  # Default to demo-user
         top_k = data.get("topK", 3)
 
         # Validate inputs
-        if not prompt or not user_id:
-            return jsonify({"error": "Missing prompt or userId"}), 400
+        if not prompt:
+            return jsonify({"error": "Missing prompt"}), 400
 
         # Generate embedding for prompt
         vector = model.encode(prompt).tolist()
 
-        # Query Pinecone
-        query_response = index.query(
-            namespace="journal-entries",
-            vector=vector,
-            top_k=top_k,
-            include_metadata=True,
-            filter={"userId": user_id}
-        )
+        # Query Pinecone with optional user filter
+        query_params = {
+            "namespace": "journal-entries",
+            "vector": vector,
+            "top_k": top_k,
+            "include_metadata": True
+        }
+        
+        # Only filter by userId if provided
+        if user_id:
+            query_params["filter"] = {"userId": user_id}
+
+        query_response = index.query(**query_params)
 
         # Format matches
         matches = [

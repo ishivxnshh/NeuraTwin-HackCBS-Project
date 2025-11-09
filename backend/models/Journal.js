@@ -9,14 +9,13 @@ const mongoose = require("mongoose");
 // module.exports = mongoose.model("Journal", journalSchema);
 
 const journalSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  user: { type: String, required: true }, // Changed from ObjectId to String for simple auth
   text: { type: String, required: true },
   aiInsights: {
     mood: String,
     tone: String,
     summary: String,
   },
-  // embedding: [Number],
   createdAt: { type: Date, default: Date.now },
 });
 

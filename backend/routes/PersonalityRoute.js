@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { updatePersonality } = require("../controllers/PersonalityController");
-const { verifyAuthToken } = require("../middlewares/AuthMiddleware");
+const { extractUserId } = require("../middlewares/SimpleAuth");
 
-router.post("/update", verifyAuthToken, updatePersonality);
+// Simple auth: extracts userId from header or uses 'demo-user'
+router.post("/update", extractUserId, updatePersonality);
 
 module.exports = router;

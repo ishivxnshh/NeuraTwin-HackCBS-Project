@@ -20,5 +20,6 @@ __pycache__/
 *.sqlite
 *.zip
 *.bak
-backend/.env.local5
-backend/.env.local5
+backend/.env.local
+backend/.env.local
+myvenv

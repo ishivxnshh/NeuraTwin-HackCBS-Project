@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const chatController = require("../controllers/chatController");
-const { verifyAuthToken } = require("../middlewares/AuthMiddleware");
+const { extractUserId } = require("../middlewares/SimpleAuth");
 
-router.post("/save", verifyAuthToken, chatController.saveChat);
-router.get("/recent", verifyAuthToken, chatController.getRecentChats);
+// Simple auth: extracts userId from header or uses 'demo-user'
+router.post("/save", extractUserId, chatController.saveChat);
+router.get("/recent", extractUserId, chatController.getRecentChats);
 
 module.exports = router;

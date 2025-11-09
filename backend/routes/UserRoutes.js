@@ -2,10 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const { getCurrentUser, logoutUser } = require("../controllers/UserController");
-const { verifyAuthToken } = require("../middlewares/AuthMiddleware");
+const { extractUserId } = require("../middlewares/SimpleAuth");
 
-router.get("/me", verifyAuthToken, getCurrentUser);
-
-router.post("/logout", verifyAuthToken, logoutUser);
+// Simple auth: extracts userId from header or uses 'demo-user'
+router.get("/me", extractUserId, getCurrentUser);
+router.post("/logout", logoutUser);
 
 module.exports = router;

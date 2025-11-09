@@ -4,7 +4,7 @@ const ChatHistory = require("../models/chatHistory");
 const saveChat = async (req, res) => {
   try {
     const { prompt, response } = req.body;
-    const userId = req.user.id; // from auth middleware
+    const userId = req.userId; // from simple auth middleware
 
     if (!prompt || !response) {
       return res.status(400).json({
@@ -37,7 +37,7 @@ const saveChat = async (req, res) => {
 // Get recent chats for context (last 5 within 30 minutes)
 const getRecentChats = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
 
     const recentChats = await ChatHistory.find({
@@ -66,7 +66,6 @@ const getRecentChats = async (req, res) => {
 module.exports = {
   saveChat,
   getRecentChats,
-  // getChatHistory
 };
 
 // exports.saveChat = async (req, res) => {

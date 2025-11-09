@@ -10,15 +10,15 @@ router.post('/query', async (req, res) => {
       `[pinecone/query] Received request: prompt=${prompt}, userId=${userId}, topK=${topK}`
     );
 
-    if (!prompt || !userId) {
-      console.error('[pinecone/query] Missing prompt or userId');
-      return res.status(400).json({ error: 'Missing prompt or userId' });
+    if (!prompt) {
+      console.error('[pinecone/query] Missing prompt');
+      return res.status(400).json({ error: 'Missing prompt' });
     }
 
     // Forward to Python server (use localhost)
     const response = await axios.post('http://localhost:6000/query', {
       prompt,
-      userId,
+      userId: userId || 'public-demo-user',
       topK,
     });
 

@@ -1,12 +1,29 @@
 const User = require("../models/User");
+const mongoose = require("mongoose");
+
+// Helper function to find or create user for simple auth
+async function findOrCreateUser(userId) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    // For simple auth (non-ObjectId), find or create by email
+    let user = await User.findOne({ email: `${userId}@demo.local` });
+    if (!user) {
+      user = await User.create({
+        email: `${userId}@demo.local`,
+        name: userId === 'demo-user' ? 'Demo User' : userId,
+      });
+    }
+    return user;
+  }
+  return await User.findById(userId);
+}
 
 // Create a new goal
 exports.createGoal = async (req, res) => {
   const { title, description, startDate, endDate, status } = req.body;
-  const userId = req.user.id;
+  const userId = req.userId;
 
   try {
-    const user = await User.findById(userId);
+    const user = await findOrCreateUser(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const newGoal = {
@@ -35,7 +52,7 @@ exports.createGoal = async (req, res) => {
 // Update a goal
 exports.updateGoal = async (req, res) => {
   const { goalId } = req.params;
-  const userId = req.user.id;
+  const userId = req.userId;
   const updateData = req.body;
 
   try {
@@ -59,7 +76,7 @@ exports.updateGoal = async (req, res) => {
 // Delete a goal
 exports.deleteGoal = async (req, res) => {
   const { goalId } = req.params;
-  const userId = req.user.id;
+  const userId = req.userId;
 
   try {
     const user = await User.findById(userId);
@@ -78,7 +95,7 @@ exports.deleteGoal = async (req, res) => {
 
 // GET ALL GOALS
 exports.getGoals = async (req, res) => {
-  const userId = req.user.id;
+  const userId = req.userId;
 
   try {
     const user = await User.findById(userId);
@@ -94,7 +111,7 @@ exports.getGoals = async (req, res) => {
 // UPDATE OF PROGRESSS
 exports.updateGoalProgress = async (req, res) => {
   const { goalId } = req.params;
-  const userId = req.user.id;
+  const userId = req.userId;
   const { progress } = req.body;
 
   try {

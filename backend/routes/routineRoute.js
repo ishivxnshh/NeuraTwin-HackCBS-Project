@@ -2,9 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const routineController = require("../controllers/routineController");
-const { verifyAuthToken } = require("../middlewares/AuthMiddleware");
+const { extractUserId } = require("../middlewares/SimpleAuth");
 
-router.use(verifyAuthToken); // Protect all routine routes
+// Simple auth applied to all routine routes
+router.use(extractUserId);
 
 router.post("/create-routine", routineController.createRoutine);
 router.get("/get-routine", routineController.getRoutines);

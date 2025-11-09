@@ -2,7 +2,7 @@ const User = require("../models/User");
 
 const updatePersonality = async (req, res) => {
   try {
-    const userId = req.user.id; // Ensure auth middleware sets this
+    const userId = req.userId; // From simple auth middleware
     const { O, C, E, A, N } = req.body;
 
     if ([O, C, E, A, N].some((score) => typeof score !== "number")) {

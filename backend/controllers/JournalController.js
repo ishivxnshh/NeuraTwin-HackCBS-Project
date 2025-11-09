@@ -13,9 +13,9 @@ exports.createJournal = async (req, res) => {
 
     const { text } = parseResult.data;
 
-    // Step 1: Save journal in MongoDB
+    // Step 1: Save journal in MongoDB (using simple auth userId)
     const journal = await Journal.create({
-      user: req.user._id,
+      user: req.userId,
       text,
     });
 
@@ -30,10 +30,9 @@ exports.createJournal = async (req, res) => {
       id: `journal_${journal._id}`,
       text,
       summary: aiInsights.summary,
-      userId: req.user._id.toString(),
+      userId: req.userId,
       createdAt: journal.createdAt.toISOString(),
     };
-    // console.log("Embedding payload:", embedPayload);
 
     const embedResponse = await fetch('http://localhost:6000/embed', {
       method: 'POST',
@@ -66,15 +65,9 @@ exports.getJournals = async (req, res) => {
     const limit = 3;
     const skip = (page - 1) * limit;
 
-    const totalJournals = await Journal.countDocuments({ user: req.user._id });
+    const totalJournals = await Journal.countDocuments({ user: req.userId });
 
-    // const journals = await Journal.find({ user: req.user._id })
-    //   .sort({ createdAt: -1 })
-    //   .skip(skip)
-    //   .limit(limit)
-    //   .select("text createdAt"); // optimization: only send needed fields
-
-    const journals = await Journal.find({ user: req.user._id })
+    const journals = await Journal.find({ user: req.userId })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
