@@ -506,7 +506,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🌐 Links
 
 - 🔗 **Live Demo**: [ronitrox.xyz](https://www.ronitrox.xyz)
-- 📧 **Contact**: [Your Email]
+- 📧 **Contact**: www.shivansh065@gmail.com
 - 🐦 **Twitter**: [Your Twitter]
 - 💼 **LinkedIn**: [Your LinkedIn]
 
