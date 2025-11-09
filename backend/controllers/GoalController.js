@@ -3,18 +3,41 @@ const mongoose = require("mongoose");
 
 // Helper function to find or create user for simple auth
 async function findOrCreateUser(userId) {
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    // For simple auth (non-ObjectId), find or create by email
-    let user = await User.findOne({ email: `${userId}@demo.local` });
-    if (!user) {
-      user = await User.create({
-        email: `${userId}@demo.local`,
-        name: userId === 'demo-user' ? 'Demo User' : userId,
-      });
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      // For simple auth (non-ObjectId), find or create by email
+      const userEmail = `${userId}@demo.local`;
+      let user = await User.findOne({ email: userEmail });
+      
+      if (!user) {
+        console.log(`Creating new user for userId: ${userId}`);
+        try {
+          user = await User.create({
+            email: userEmail,
+            name: userId === 'demo-user' ? 'Demo User' : userId,
+          });
+        } catch (createError) {
+          // If duplicate key error on auth0Sub, try to find existing user again
+          if (createError.code === 11000) {
+            console.log('Duplicate key error, attempting to find existing user...');
+            user = await User.findOne({ email: userEmail });
+            if (!user) {
+              // If still not found, there might be orphaned data - create with explicit null
+              console.log('User still not found, database might have orphaned index');
+              throw new Error('Unable to create user due to database index conflict. Please check MongoDB indexes.');
+            }
+          } else {
+            throw createError;
+          }
+        }
+      }
+      return user;
     }
-    return user;
+    return await User.findById(userId);
+  } catch (error) {
+    console.error('Error in findOrCreateUser:', error);
+    throw error;
   }
-  return await User.findById(userId);
 }
 
 // Create a new goal
@@ -56,7 +79,7 @@ exports.updateGoal = async (req, res) => {
   const updateData = req.body;
 
   try {
-    const user = await User.findById(userId);
+    const user = await findOrCreateUser(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const goal = user.goals.id(goalId);
@@ -79,7 +102,7 @@ exports.deleteGoal = async (req, res) => {
   const userId = req.userId;
 
   try {
-    const user = await User.findById(userId);
+    const user = await findOrCreateUser(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     user.goals = user.goals.filter((goal) => goal._id.toString() !== goalId);
@@ -98,11 +121,18 @@ exports.getGoals = async (req, res) => {
   const userId = req.userId;
 
   try {
-    const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User not found" });
+    console.log('getGoals called with userId:', userId);
+    const user = await findOrCreateUser(userId);
+    if (!user) {
+      console.log('User not found for userId:', userId);
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    res.status(200).json({ goals: user.goals });
+    console.log('User found, goals count:', user.goals ? user.goals.length : 0);
+    res.status(200).json({ goals: user.goals || [] });
   } catch (err) {
+    console.error('Error in getGoals:', err);
+    console.error('Error stack:', err.stack);
     res
       .status(500)
       .json({ message: "Error fetching goals", error: err.message });
@@ -115,7 +145,7 @@ exports.updateGoalProgress = async (req, res) => {
   const { progress } = req.body;
 
   try {
-    const user = await User.findById(userId);
+    const user = await findOrCreateUser(userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const goal = user.goals.id(goalId);

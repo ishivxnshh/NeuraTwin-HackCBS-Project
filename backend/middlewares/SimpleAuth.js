@@ -15,6 +15,8 @@ const extractUserId = (req, res, next) => {
   // Check for custom header, fallback to demo user
   const userId = req.headers['x-user-id'] || 'demo-user';
   
+  console.log('SimpleAuth - Extracted userId:', userId);
+  
   // Attach to request object for controllers
   req.userId = userId;
   

@@ -1,4 +1,21 @@
 const User = require("../models/User");
+const mongoose = require("mongoose");
+
+// Helper function to find or create user for simple auth
+async function findOrCreateUser(userId) {
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    // For simple auth (non-ObjectId), find or create by email
+    let user = await User.findOne({ email: `${userId}@demo.local` });
+    if (!user) {
+      user = await User.create({
+        email: `${userId}@demo.local`,
+        name: userId === 'demo-user' ? 'Demo User' : userId,
+      });
+    }
+    return user;
+  }
+  return await User.findById(userId);
+}
 
 const updatePersonality = async (req, res) => {
   try {
@@ -11,7 +28,7 @@ const updatePersonality = async (req, res) => {
         .json({ error: "All OCEAN scores must be numbers." });
     }
 
-    const user = await User.findById(userId);
+    const user = await findOrCreateUser(userId);
     if (!user) return res.status(404).json({ error: "User not found." });
 
     const now = new Date();

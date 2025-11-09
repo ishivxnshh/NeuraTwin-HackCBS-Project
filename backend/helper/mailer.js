@@ -9,18 +9,26 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOTP = async (email, otp) => {
-  await transporter.sendMail({
-    from: `"NeuraTwin" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: "🔐 Your NeuraTwin Magic Code",
-    html: `
-      <div style="font-family: sans-serif;">
-        <h2>Your OTP is: <span style="color: #6366f1;">${otp}</span></h2>
-        <p>This code is valid for <strong>2 minutes</strong>.</p>
-        <p>Please do not share it with anyone.</p>
-      </div>
-    `,
-  });
+  try {
+    console.log(`📧 Attempting to send OTP to ${email}...`);
+    const info = await transporter.sendMail({
+      from: `"NeuraTwin" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "🔐 Your NeuraTwin Magic Code",
+      html: `
+        <div style="font-family: sans-serif;">
+          <h2>Your OTP is: <span style="color: #6366f1;">${otp}</span></h2>
+          <p>This code is valid for <strong>5 minutes</strong>.</p>
+          <p>Please do not share it with anyone.</p>
+        </div>
+      `,
+    });
+    console.log(`✅ OTP email sent successfully. Message ID: ${info.messageId}`);
+  } catch (error) {
+    console.error('❌ Failed to send OTP email:', error.message);
+    console.error('Error details:', error);
+    throw error;
+  }
 };
 
 module.exports = { sendOTP };

@@ -61,22 +61,28 @@ exports.createJournal = async (req, res) => {
 
 exports.getJournals = async (req, res) => {
   try {
+    console.log('getJournals called with userId:', req.userId);
+    
     const page = parseInt(req.query.page) || 1;
     const limit = 3;
     const skip = (page - 1) * limit;
 
     const totalJournals = await Journal.countDocuments({ user: req.userId });
+    console.log('Total journals found:', totalJournals);
 
     const journals = await Journal.find({ user: req.userId })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
+    console.log('Journals retrieved:', journals.length);
+
     const hasMore = skip + journals.length < totalJournals;
 
     res.json({ journals, hasMore });
   } catch (err) {
     console.error('Error fetching journals:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('Error stack:', err.stack);
+    res.status(500).json({ message: 'Server error', error: err.message });
   }
 };
