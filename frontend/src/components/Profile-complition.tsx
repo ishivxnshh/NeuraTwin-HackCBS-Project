@@ -416,6 +416,19 @@ export default function ProfileCompletion() {
           "firstLogin",
           JSON.stringify(response?.firstLogin)
         ); // Store firstLogin
+        
+        // Decode JWT and store user ID
+        if (response?.token) {
+          try {
+            const payload = JSON.parse(atob(response.token.split('.')[1]));
+            if (payload.id) {
+              localStorage.setItem('user-id', payload.id);
+            }
+          } catch (e) {
+            console.error('Failed to decode token:', e);
+          }
+        }
+        
         toast.success("Profile completed!");
         handleRedirect(); // redirect to dashboard
       } else {

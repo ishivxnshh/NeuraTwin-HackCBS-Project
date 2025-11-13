@@ -48,6 +48,7 @@ const HeroNav: React.FC<HeroNavProps> = ({ toggleSidebar, isSidebarOpen }) => {
       if (res.success) {
         router.push("/login");
         localStorage.removeItem("auth-token");
+        localStorage.removeItem("user-id");
         toast.success("Logged out successfully");
 
         setCurrentUser(null);

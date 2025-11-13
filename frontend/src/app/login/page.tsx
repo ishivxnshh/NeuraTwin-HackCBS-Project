@@ -43,6 +43,18 @@ const page = () => {
       if (res.success) {
         const toastId = toast.success('OTP Verified!');
         localStorage.setItem('auth-token', res.token);
+        
+        // Decode JWT and store user ID if not a new user
+        if (!res.newUser && res.token) {
+          try {
+            const payload = JSON.parse(atob(res.token.split('.')[1]));
+            if (payload.id) {
+              localStorage.setItem('user-id', payload.id);
+            }
+          } catch (e) {
+            console.error('Failed to decode token:', e);
+          }
+        }
 
         setTimeout(() => {
           toast.dismiss(toastId); // Dismiss the first toast
