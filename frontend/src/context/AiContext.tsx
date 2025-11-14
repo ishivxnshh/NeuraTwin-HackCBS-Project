@@ -161,8 +161,15 @@ export const AIProvider = ({ children }: { children: React.ReactNode }) => {
     setShowResponse(false);
 
     try {
+      const apiKey = process.env.NEXT_PUBLIC_GROQ_KEY;
+      if (!apiKey) {
+        console.error("NEXT_PUBLIC_GROQ_KEY is not defined. Please check your .env.local file and restart the dev server.");
+        toast.error("API key not configured. Please restart the server.");
+        return;
+      }
+      
       const response = await callGroqAI({
-        apiKey: process.env.NEXT_PUBLIC_GROQ_KEY!,
+        apiKey,
         mode: "personality_q",
         question,
         name: currentUser.name,
@@ -246,9 +253,15 @@ export const AIProvider = ({ children }: { children: React.ReactNode }) => {
         console.log("journal summaries:", journalSummaries);
       } 
 
+      const apiKey = process.env.NEXT_PUBLIC_GROQ_KEY;
+      if (!apiKey) {
+        console.error("NEXT_PUBLIC_GROQ_KEY is not defined. Please check your .env.local file and restart the dev server.");
+        toast.error("API key not configured. Please restart the server.");
+        return;
+      }
 
       const aiReply = await callGroqAI({
-        apiKey: process.env.NEXT_PUBLIC_GROQ_KEY!,
+        apiKey,
         mode: "general_q",
         question: submittedPrompt,
         name: currentUser.name,
@@ -297,8 +310,15 @@ export const AIProvider = ({ children }: { children: React.ReactNode }) => {
     setShowResponse(false);
 
     try {
+      const apiKey = process.env.NEXT_PUBLIC_GROQ_KEY;
+      if (!apiKey) {
+        console.error("NEXT_PUBLIC_GROQ_KEY is not defined. Please check your .env.local file and restart the dev server.");
+        toast.error("API key not configured. Please restart the server.");
+        return;
+      }
+
       const responseRoutine = await callGroqAI({
-        apiKey: process.env.NEXT_PUBLIC_GROQ_KEY!,
+        apiKey,
         mode: "routine_q",
         question,
         name: currentUser.name,

@@ -323,8 +323,6 @@ export default function Component() {
       setCountdown((prev) => {
         if (!prev || prev === 1) {
           clearInterval(interval);
-          router.push("/home");
-          document.cookie = "makeOrbSpeak=true; path=/";
           return null;
         }
         return prev - 1;
@@ -333,6 +331,14 @@ export default function Component() {
 
     return () => clearInterval(interval);
   }, [countdown]);
+
+  // Separate effect to handle navigation when countdown reaches 0
+  useEffect(() => {
+    if (countdown === 0) {
+      router.push("/home");
+      document.cookie = "makeOrbSpeak=true; path=/";
+    }
+  }, [countdown, router]);
 
   if (showResults) {
     // console.log("AFTER SUBMISSIONS OF DATA");

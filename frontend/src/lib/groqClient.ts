@@ -288,6 +288,12 @@ Journal:
     ],
   };
 
+  // Check if API key is provided
+  if (!apiKey || apiKey === 'undefined' || apiKey.trim() === '') {
+    console.error("Groq API key is missing. Please check NEXT_PUBLIC_GROQ_KEY in .env.local");
+    throw new Error("Invalid API Key");
+  }
+
   try {
     const res = await fetch(GROQ_API_URL, {
       method: "POST",
