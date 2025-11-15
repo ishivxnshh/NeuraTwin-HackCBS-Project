@@ -150,12 +150,13 @@ export const AIProvider = ({ children }: { children: React.ReactNode }) => {
     if (isAILoading || aiorbSpeak) return;
 
     // 🛑 Check quota first
-    if (!checkAndIncrementAICount(currentUser._id)) {
-      toast.error("Reached your daily AI uses. Please Try Tomorrow.");
+    const userTier = currentUser.subscription?.tier || "free";
+    if (!checkAndIncrementAICount(currentUser._id, userTier)) {
+      toast.error("Reached your daily AI uses. Please upgrade your plan.");
 
       return;
     }
-    setRemainingAICount(getRemainingAICount(currentUser._id));
+    setRemainingAICount(getRemainingAICount(currentUser._id, userTier));
 
     setIsAILoading(true);
     setShowResponse(false);
@@ -220,13 +221,14 @@ export const AIProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     // 🛑 Check quota before calling AI
-    if (!checkAndIncrementAICount(currentUser._id)) {
-      toast.error("Reached your daily AI uses. Please Try Tomorrow.");
+    const userTier = currentUser.subscription?.tier || "free";
+    if (!checkAndIncrementAICount(currentUser._id, userTier)) {
+      toast.error("Reached your daily AI uses. Please upgrade your plan.");
       setPrompt("");
       return;
     }
 
-    setRemainingAICount(getRemainingAICount(currentUser._id));
+    setRemainingAICount(getRemainingAICount(currentUser._id, userTier));
 
     setIsAILoading(true);
     setLoadingProgress(true);
@@ -299,11 +301,12 @@ export const AIProvider = ({ children }: { children: React.ReactNode }) => {
     if (isAILoading || aiorbSpeak) return;
 
     // 🛑 Quota check
-    if (!checkAndIncrementAICount(currentUser._id)) {
-      toast.error("Reached your daily AI uses. Please Try Tomorrow.");
+    const userTier = currentUser.subscription?.tier || "free";
+    if (!checkAndIncrementAICount(currentUser._id, userTier)) {
+      toast.error("Reached your daily AI uses. Please upgrade your plan.");
       return;
     }
-    setRemainingAICount(getRemainingAICount(currentUser._id));
+    setRemainingAICount(getRemainingAICount(currentUser._id, userTier));
 
     setIsAILoading(true);
     setLoadingProgress(true);
@@ -353,11 +356,12 @@ export const AIProvider = ({ children }: { children: React.ReactNode }) => {
     if (isAILoading || aiorbSpeak) return;
 
     // 🛑 Quota check
-    if (!checkAndIncrementAICount(currentUser._id)) {
-      toast.error("Reached your daily AI uses. Please Try Tomorrow.");
+    const userTier = currentUser.subscription?.tier || "free";
+    if (!checkAndIncrementAICount(currentUser._id, userTier)) {
+      toast.error("Reached your daily AI uses. Please upgrade your plan.");
       return;
     }
-    setRemainingAICount(getRemainingAICount(currentUser._id));
+    setRemainingAICount(getRemainingAICount(currentUser._id, userTier));
 
     setIsAILoading(true);
     setLoadingProgress(true);

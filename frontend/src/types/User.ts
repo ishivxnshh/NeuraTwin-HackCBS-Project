@@ -44,7 +44,15 @@ export interface Growth {
   journalStreak: number;
   milestoneCount: number;
   personalityGrowth: number;
+}
 
+export interface Subscription {
+  tier: "free" | "pro" | "premium";
+  status: "active" | "cancelled" | "expired";
+  startDate?: string;
+  endDate?: string;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
 }
 
 export interface User {
@@ -59,6 +67,7 @@ export interface User {
   milestones: Milestone[];
   personality: Personality;
   growth: Growth;
+  subscription?: Subscription;
   createdAt: string;
   updatedAt: string;
 }

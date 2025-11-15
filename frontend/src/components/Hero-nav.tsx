@@ -8,6 +8,7 @@ import {
   LuUser,
   LuSettings,
   LuRefreshCcw,
+  LuCrown,
 } from "react-icons/lu";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
@@ -158,6 +159,14 @@ const HeroNav: React.FC<HeroNavProps> = ({ toggleSidebar, isSidebarOpen }) => {
                 >
                   <LuUser size={18} />
                   Your Profile
+                </button>
+                <button
+                  type="button"
+                  onClick={() => router.push("/subscription")}
+                  className="w-full text-left text-[16px] font-sora font-medium text-gray-700 hover:text-indigo-600 flex items-center gap-2"
+                >
+                  <LuCrown size={18} />
+                  Upgrade Plan
                 </button>
                 <button
                   type="button"

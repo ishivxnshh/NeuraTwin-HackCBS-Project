@@ -61,6 +61,9 @@ app.use('/api/routine', routineRoutes);
 // FOR GOAL
 const goalRoutes = require('./routes/GoalRoutes');
 app.use('/api/goal', goalRoutes);
+// FOR SUBSCRIPTION
+const subscriptionRoutes = require('./routes/SubscriptionRoutes');
+app.use('/api/subscription', subscriptionRoutes);
 
 // Start server
 app.listen(PORT, () => {

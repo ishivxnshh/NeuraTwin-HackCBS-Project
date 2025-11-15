@@ -62,6 +62,24 @@ const userSchema = new mongoose.Schema({
     milestoneCount: { type: Number, default: 0 },
   },
 
+  // Subscription
+  subscription: {
+    tier: {
+      type: String,
+      enum: ["free", "pro", "premium"],
+      default: "free",
+    },
+    status: {
+      type: String,
+      enum: ["active", "cancelled", "expired"],
+      default: "active",
+    },
+    startDate: Date,
+    endDate: Date,
+    stripeCustomerId: String,
+    stripeSubscriptionId: String,
+  },
+
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
